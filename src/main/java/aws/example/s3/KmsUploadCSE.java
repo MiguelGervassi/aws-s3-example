@@ -213,29 +213,29 @@ public class KmsUploadCSE {
      * Encrypts a symmetric key using the provided encryption materials and returns
      * it in raw byte array form.
      */
-//    private static byte[] getEncryptedSymmetricKey(SecretKey toBeEncrypted, EncryptionMaterials materials, Provider cryptoProvider) {
-//        Key keyToDoEncryption;
-////        if(materials.getKeyPair() != null) {
-////            // Do envelope encryption with public key from key pair
-////            keyToDoEncryption = materials.getKeyPair().getPublic();
-////        } else {
-//            // Do envelope encryption with symmetric key
-//        keyToDoEncryption= materials.getSymmetricKey();
-////        }
-//        try {
-//            Cipher cipher;
-//            byte[] toBeEncryptedBytes = toBeEncrypted.getEncoded();
-//            if(cryptoProvider != null) {
-//                cipher = Cipher.getInstance(keyToDoEncryption.getAlgorithm(), cryptoProvider);
-//            } else {
-//                cipher = Cipher.getInstance(keyToDoEncryption.getAlgorithm()); // Use default JCE Provider
-//            }
-//            cipher.init(Cipher.ENCRYPT_MODE, keyToDoEncryption);
-//            return cipher.doFinal(toBeEncryptedBytes);
-//        } catch (Exception e) {
-//            throw new AmazonClientException("Unable to encrypt symmetric key: " + e.getMessage(), e);
+    private static byte[] getEncryptedSymmetricKey(SecretKey toBeEncrypted, EncryptionMaterials materials, Provider cryptoProvider) {
+        Key keyToDoEncryption;
+//        if(materials.getKeyPair() != null) {
+//            // Do envelope encryption with public key from key pair
+//            keyToDoEncryption = materials.getKeyPair().getPublic();
+//        } else {
+            // Do envelope encryption with symmetric key
+        keyToDoEncryption= materials.getSymmetricKey();
 //        }
-//    }
+        try {
+            Cipher cipher;
+            byte[] toBeEncryptedBytes = toBeEncrypted.getEncoded();
+            if(cryptoProvider != null) {
+                cipher = Cipher.getInstance(keyToDoEncryption.getAlgorithm(), cryptoProvider);
+            } else {
+                cipher = Cipher.getInstance(keyToDoEncryption.getAlgorithm()); // Use default JCE Provider
+            }
+            cipher.init(Cipher.ENCRYPT_MODE, keyToDoEncryption);
+            return cipher.doFinal(toBeEncryptedBytes);
+        } catch (Exception e) {
+            throw new AmazonClientException("Unable to encrypt symmetric key: " + e.getMessage(), e);
+        }
+    }
 
     /**
      * Updates the metadata to contain the encrypted symmetric key, IV, and calculated content length of the encrypted data.
