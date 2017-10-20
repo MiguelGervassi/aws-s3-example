@@ -39,12 +39,23 @@ public class S3Controller {
     //    @RequestMapping(path = "/upload", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
 //    public String upload(@RequestBody S3Object s3Object) throws Exception {
 
+
+    @RequestMapping(path = "/upload", method = RequestMethod.PUT)
+    public String upload(@PathParam("bucketName") String bucketName, @PathParam("cmkId") String cmkId, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
+        System.out.println(bucketName);
+        System.out.println(cmkId);
+        System.out.println(fileInput);
+        KmsUploadSSE.main(new Object[] { bucketName, fileInput, cmkId });
+        return "success";
+    }
+
+
     @RequestMapping(path = "/cse-kms-upload", method = RequestMethod.PUT)
     public String uploadUsingClientSideEncryption(@PathParam("bucketName") String bucketName, @PathParam("cmkId") String cmkId, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
         System.out.println(bucketName);
         System.out.println(cmkId);
         System.out.println(fileInput.getOriginalFilename());
-        KmsUploadCSE.main(new String[] { bucketName, fileInput.getOriginalFilename(), cmkId });
+        KmsUploadCSE.main(new Object[] { bucketName, fileInput, cmkId });
         return "success";
     }
 
@@ -53,7 +64,7 @@ public class S3Controller {
         System.out.println(bucketName);
         System.out.println(cmkId);
         System.out.println(fileInput.getOriginalFilename());
-        KmsUploadSSE.main(new String[] { bucketName, fileInput.getOriginalFilename(), cmkId });
+        KmsUploadSSE.main(new Object[] { bucketName, fileInput, cmkId });
         return "success";
     }
 

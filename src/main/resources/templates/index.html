@@ -21,7 +21,7 @@
 
 <body class="nav-md">
 <h3>S3 File Upload</h3>
-<form id="s3_form" enctype="multipart/form-data" method="POST" action="/s3/upload">
+<form id="s3_form" enctype="multipart/form-data" method="POST">
     <div class="form-group">
         <label for="bucketName">Bucket</label>
         <select class="form-control" id="bucketName" name="bucketName">
@@ -33,9 +33,12 @@
         <label for="bucketName">KMS CMK</label>
         <select class="form-control" id="cmkId" name="cmkId">
             <!--/*@thymesVar id="key" type="keys"*/-->
-            <option th:each="index : ${#numbers.sequence( 0, #arrays.length(aliases)-1)}"
-                    th:value="${aliases[index].TargetKeyId}"
-                    th:text="${aliases[index].AliasName}"/>
+            <!--<option th:each="index : ${#numbers.sequence( 0, #arrays.length(aliases)-1)}"-->
+                    <!--th:value="${aliases[index].TargetKeyId}"-->
+                    <!--th:text="${aliases[index].AliasName}"/>-->
+            <option th:each="alias : ${aliases}"
+                    th:value="${alias.TargetKeyId}"
+                    th:text="${alias.AliasName}"/>
         </select>
     </div>
     <div class="form-group">

@@ -19,7 +19,7 @@ $(function () {
         // var data = { "bucket_name" :  bucket_name, "file_name" : file_name};
         var data = $('#s3_form').serialize();
         console.log("Serialized Data: " + data);
-        var url = "";
+        var url = "/s3/upload";
         if(encryptionOption == 'SSE-KMS') {
             url = "/s3/sse-kms-upload"
         } else {
