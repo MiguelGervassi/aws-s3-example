@@ -1,0 +1,21 @@
+# SPRING PROFILE
+spring:
+  profiles: development
+  application:
+    name: s3-sample-app
+  h2.console.enabled: true
+  h2.console.path: /h2
+  datasource:
+    url: jdbc:h2:file:~/test
+    username: root
+    password: toortoor
+    driver-class-name: org.h2.Driver
+amazon:
+  aws:
+    access-key-id: replace
+    access-key-secret: replace
+    region: us-east-1
+  s3:
+    default-bucket: replace
+multipart.maxFileSize: 5MB
+multipart.maxRequestSize: 5MB

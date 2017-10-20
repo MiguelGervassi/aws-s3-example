@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -9,74 +9,51 @@
 
     <title>Broadridge</title>
 
-    <!-- Bootstrap -->
-    <link href="bluemix2/css/bootstrap.min.css" rel="stylesheet"/>
-
-    <!-- Custom Theme Style -->
-    <link href="bluemix2/css/custom.min.css" rel="stylesheet"/>
-    <link rel="shortcut icon" href="bluemix2/images/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="bluemix2/css/app.css"/>
-
     <!-- Main javascript files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"
-            th.src="@{/webjars/jquery/2.1.4/jquery.min.js}"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"
-            th.src="@{/webjars/momentjs/2.18.1/moment.min.js}"/>
-    <script src="bluemix2/js/bootstrap.min.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="bluemix2/js/custom.min.js"></script>
-    <script src="bluemix2/js/index.js"/>
+    <script src="/webjars/jquery/2.1.4/jquery.min.js"/>
+    <script src="/webjars/bootstrap/3.3.4/js/bootstrap.min.js"/>
+    <script src="/js/index.js"/>
+
+    <!-- Main css files -->
+    <link rel="stylesheet"
+          href="/webjars/bootstrap/3.3.4/css/bootstrap.min.css"/>
 </head>
 
 <body class="nav-md">
-<div class="container body">
-    <div class="navbar">
-        <p class="navbar-text navbar-left">
-        <div class="dropdown">
-            Signed in as John Doe
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a href="/login">Logout</a></li>
-            </ul>
-        </div>
-        </p>
-        </div>
-    <div class="main_container" style="text-align: center; padding-top:25%;">
-        <!-- Large modal -->
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-user"> </i> Chat Live With Me Now! </button>
-
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">Account Management Chatbox</h4>
-                    </div>
-                    <div class="modal-body" style="height:500px; padding-bottom: 25px;">
-                            <div class="chat-column">
-                                <div id="scrollingChat"></div>
-                                <div id="input-wrapper" class="responsive-columns-wrapper">
-                                    <input type="hidden" id="contextHiddenInput" />
-                                    <label for="textInput" class="inputOutline" style="width: 100%">
-                                        <form method="POST" onsubmit="event.preventDefault(); sendMessage();">
-                                            <input id="textInput" class="input responsive-column" autocomplete="off" autofocus="true"
-                                                   placeholder="Type something" type="text"/>
-                                        </form>
-                                    </label>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" onclick="reset()">Reset Session</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end of modal -->
+<h3>S3 File Upload</h3>
+<form id="s3_form" enctype="multipart/form-data" method="POST" action="/s3/upload">
+    <div class="form-group">
+        <label for="bucketName">Bucket</label>
+        <select class="form-control" id="bucketName" name="bucketName">
+            <!--/*@thymesVar id="bucket" type="buckets"*/-->
+            <option th:each="bucket : ${buckets}"
+                    th:value="${bucket.name}"
+                    th:text="${bucket.name}"/>
+        </select>
+        <label for="bucketName">KMS CMK</label>
+        <select class="form-control" id="cmkId" name="cmkId">
+            <!--/*@thymesVar id="key" type="keys"*/-->
+            <option th:each="index : ${#numbers.sequence( 0, #arrays.length(aliases)-1)}"
+                    th:value="${aliases[index].TargetKeyId}"
+                    th:text="${aliases[index].AliasName}"/>
+        </select>
     </div>
-</div>
+    <div class="form-group">
+        <label for="fileInput">File Upload</label>
+        <input type="file" class="form-control-file" id="fileInput" name="fileInput" aria-describedby="fileHelp"/>
+    </div>
+    <div class="form-check">
+        <label class="radio-inline"><input type="radio" name="encryptionRadioOption" value="SSE-KMS"/>Server-side Encryption</label>
+        <label class="radio-inline"><input type="radio" name="encryptionRadioOption" value="CSE-KMS" checked="checked"/>Client-side Encryption</label>
+        <!--<label class="form-check-label">-->
+            <!--<input class="form-control-ra" type="checkbox" id="encryptCheckBox" name="encryptCheckBox" value="true" aria-label="..."/>Encrypt?-->
+        <!--</label>-->
+        <!--<label class="form-check-label">-->
+            <!--<input class="form-check-input" type="checkbox" id="encryptCheckBox" name="encryptCheckBox" value="true" aria-label="..."/>Encrypt?-->
+        <!--</label>-->
+
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 </body>
 </html>
