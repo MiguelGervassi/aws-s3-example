@@ -39,16 +39,16 @@ jobs:
         
       # run tests!
       - run: mvn integration-test
-deployment:
-  staging:
-    branch: master
-    codedeploy:
-      appname-1234:
-        application_root: /
-        region: us-east-1
-        revision_location:
-          revision_type: S3
-          s3_location:
-            bucket: aws-s3-example-workspace
-            key_pattern: appname-1234-{BRANCH}-{SHORT_COMMIT}
-        deployment_group: my-deployment-group
+    deployment:
+      staging:
+        branch: master
+        codedeploy:
+          appname-1234:
+            application_root: /
+            region: us-east-1
+            revision_location:
+              revision_type: S3
+              s3_location:
+                bucket: aws-s3-example-workspace
+                key_pattern: appname-1234-{BRANCH}-{SHORT_COMMIT}
+            deployment_group: my-deployment-group
