@@ -17,10 +17,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.amazonaws.util.IOUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 /**
  * Get an object within an Amazon S3 bucket.
@@ -30,39 +30,47 @@ import java.io.IOException;
  */
 public class GetObject
 {
-    public static void main(String[] args)
+    public static S3ObjectInputStream download(Object[] args)
     {
         final String USAGE = "\n" +
             "To run this example, supply the name of an S3 bucket and object to\n" +
             "download from it.\n" +
             "\n" +
-            "Ex: GetObject <bucketname> <filename>\n";
+            "Ex: GetObject <bucketname> <filename> <cmkid> <response>\n";
 
         if (args.length < 2) {
             System.out.println(USAGE);
             System.exit(1);
         }
 
-        String bucket_name = args[0];
-        String key_name = args[1];
+        String bucket_name = args[0].toString();
+        String key_name = args[1].toString();
+        String cmkId = args[2].toString();
+        HttpServletResponse response = (HttpServletResponse) args[3];
 
         System.out.format("Downloading %s from S3 bucket %s...\n", key_name, bucket_name);
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         try {
             S3Object o = s3.getObject(bucket_name, key_name);
             S3ObjectInputStream s3is = o.getObjectContent();
-            FileOutputStream fos = new FileOutputStream(new File(key_name));
-            byte[] read_buf = new byte[1024];
-            int read_len = 0;
-            while ((read_len = s3is.read(read_buf)) > 0) {
-                fos.write(read_buf, 0, read_len);
-            }
-            s3is.close();
-            fos.close();
+            FileInputStream fos = new FileInputStream(new File(key_name));
+//            IOUtils.copy(s3is, response.getOutputStream());
+//            FileInputStream fos = new FileInputStream(new File(key_name));
+//            System.out.println(fos);
+//            byte[] read_buf = new byte[1024];
+//            int read_len = 0;
+//            while ((read_len = s3is.read(read_buf)) > 0) {
+//                fos.write(read_buf, 0, read_len);
+//            }
+//            response.flushBuffer();
+//            s3is.close();
+//            fos.close();
+            return s3is;
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         } catch (IOException e) {
@@ -70,6 +78,7 @@ public class GetObject
             System.exit(1);
         }
         System.out.println("Done!");
+        return null;
     }
 }
 

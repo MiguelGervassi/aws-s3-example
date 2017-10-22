@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ListObjects
 {
-    public static void main(String[] args)
+    public static List<S3ObjectSummary> listObjects(String[] args)
     {
         final String USAGE = "\n" +
             "To run this example, supply the name of a bucket to list!\n" +
@@ -47,5 +47,7 @@ public class ListObjects
         for (S3ObjectSummary os: objects) {
             System.out.println("* " + os.getKey());
         }
+        System.out.println(objects);
+        return objects;
     }
 }

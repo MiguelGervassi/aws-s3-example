@@ -1,5 +1,6 @@
 package aws.example.controllers;
 
+import aws.example.s3.ListObjects;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

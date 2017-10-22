@@ -41,7 +41,7 @@ public class KmsUploadSSE {
             putRequest.withSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams(kms_cmk_id));
             PutObjectResult response = s3.putObject(putRequest);
             System.out.println("Uploaded object encryption status is " +
-                    response.getSSECustomerAlgorithm());
+                    response.getSSEAlgorithm());
         } catch (AmazonServiceException ase) {
             System.out.println("Caught an AmazonServiceException, which " +
                     "means your request made it " +
