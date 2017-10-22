@@ -1,0 +1,13 @@
+deployment:
+  staging:
+    branch: master
+    codedeploy:
+      aws-s3-example:
+        application_root: /
+        region: us-east-1
+        revision_location:
+          revision_type: S3
+          s3_location:
+            bucket: aws-s3-example-workspace
+            key_pattern: aws-s3-example-{BRANCH}-{SHORT_COMMIT}
+        deployment_group: aws-s3-example-dg
