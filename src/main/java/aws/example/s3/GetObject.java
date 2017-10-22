@@ -30,7 +30,7 @@ import java.io.*;
  */
 public class GetObject
 {
-    public static S3ObjectInputStream download(Object[] args)
+    public static void main(Object[] args)
     {
         final String USAGE = "\n" +
             "To run this example, supply the name of an S3 bucket and object to\n" +
@@ -45,27 +45,20 @@ public class GetObject
 
         String bucket_name = args[0].toString();
         String key_name = args[1].toString();
-        String cmkId = args[2].toString();
-        HttpServletResponse response = (HttpServletResponse) args[3];
 
         System.out.format("Downloading %s from S3 bucket %s...\n", key_name, bucket_name);
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         try {
             S3Object o = s3.getObject(bucket_name, key_name);
             S3ObjectInputStream s3is = o.getObjectContent();
-            FileInputStream fos = new FileInputStream(new File(key_name));
-//            IOUtils.copy(s3is, response.getOutputStream());
-//            FileInputStream fos = new FileInputStream(new File(key_name));
-//            System.out.println(fos);
-//            byte[] read_buf = new byte[1024];
-//            int read_len = 0;
-//            while ((read_len = s3is.read(read_buf)) > 0) {
-//                fos.write(read_buf, 0, read_len);
-//            }
-//            response.flushBuffer();
-//            s3is.close();
-//            fos.close();
-            return s3is;
+            FileOutputStream fos = new FileOutputStream(new File(key_name));
+            byte[] read_buf = new byte[1024];
+            int read_len = 0;
+            while ((read_len = s3is.read(read_buf)) > 0) {
+                fos.write(read_buf, 0, read_len);
+            }
+            s3is.close();
+            fos.close();
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
@@ -78,7 +71,6 @@ public class GetObject
             System.exit(1);
         }
         System.out.println("Done!");
-        return null;
     }
 }
 

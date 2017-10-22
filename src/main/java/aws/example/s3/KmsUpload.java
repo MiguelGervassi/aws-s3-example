@@ -2,43 +2,50 @@ package aws.example.s3;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.*;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.kms.AWSKMSClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Paths;
+import java.security.Provider;
 
-public class KmsUploadSSE {
+public class KmsUpload {
 
-    private static AmazonS3Client encryptionClient;
-
-    public static void main(Object[] args)
+    public static void upload(String bucketName, MultipartFile fileInput, String kms_cmk_id, String encryptionRadioOption)
     {
         final String USAGE = "\n" +
                 "To run this example, supply the name of an S3 bucket and a file to\n" +
                 "upload to it.\n" +
                 "\n" +
                 "Ex: PutObject <bucketname> <filename> <kmskey>\n";
-        if (args.length < 2) {
-            System.out.println(USAGE);
-            System.exit(1);
-        }
-        String bucketName = args[0].toString();
-        MultipartFile fileInput = (MultipartFile) args[1];
         String file_path = fileInput.getOriginalFilename();
-        String kms_cmk_id = args[2].toString();
         String key_name = Paths.get(file_path).getFileName().toString();
-        System.out.format("Uploading %s to S3 bucket %s...\n", file_path, bucketName);
-        final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+        AmazonS3 s3;
         try {
-            // Request server-side encryption.
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(fileInput.getContentType());
             objectMetadata.setContentLength(fileInput.getSize());
             PutObjectRequest putRequest = new PutObjectRequest(
                     bucketName, key_name, fileInput.getInputStream(), objectMetadata);
             putRequest.setMetadata(objectMetadata);
-            putRequest.withSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams(kms_cmk_id));
+            if(encryptionRadioOption.equalsIgnoreCase("SSE-KMS")) {
+                s3 = AmazonS3ClientBuilder.defaultClient();
+                putRequest.withSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams(kms_cmk_id));
+            } else {
+                // JCE or Third Party Bouncy Castle
+                Provider bcProvider = new BouncyCastleProvider();
+                KMSEncryptionMaterialsProvider materialProvider = new KMSEncryptionMaterialsProvider(kms_cmk_id);
+                CryptoConfiguration cryptoConfiguration = new CryptoConfiguration().withCryptoProvider(bcProvider).withAwsKmsRegion(Region.getRegion(Regions.US_EAST_1));
+                s3 = new AmazonS3EncryptionClientBuilder().withEncryptionMaterials(materialProvider).withCryptoConfiguration(cryptoConfiguration).withKmsClient(AWSKMSClientBuilder.defaultClient()).build();
+            }
+            System.out.format("Uploading %s to S3 bucket %s...\n", file_path, bucketName);
+            // Request encryption client based on selection
             PutObjectResult response = s3.putObject(putRequest);
             System.out.println("Uploaded object encryption status is " +
                     response.getSSEAlgorithm());

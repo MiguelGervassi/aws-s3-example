@@ -46,40 +46,4 @@ $(document).ready(function() {
         });
         return false;
     });
-
-    // $('#s3DownloadForm').on('submit',function (e) {
-    //     e.preventDefault();
-    //     var encryptCheckBox = $('input[id=encryptCheckBox]:checked', '#s3DownloadForm').val();
-    //     if(encryptCheckBox) {
-    //         this.action = "/s3/download-client-side-encrypted-object";
-    //     } else {
-    //         this.action = "/s3/download";
-    //     }
-    //     this.submit();
-        // var bucketName = $("#bucketName_dl").val();
-        // var objectName = $("#objectName_dl").val();
-        // var encryptionOption = $('input[name=encryptionRadioOption]:checked', '#s3DownloadForm').val();
-        // console.log("Bucket Name: " + bucketName);
-        // console.log("Object Name: " + objectName);
-        // console.log("Encryption option: " + encryptionOption);
-        // var data = $('#s3DownloadForm').serialize();
-        // console.log("Serialized Data: " + data);
-        // var url = "/s3/download";
-        // $.ajax({
-        //     type: "GET",
-        //     url: url,
-        //     data: data,
-        //     dataType: "application/json",
-        //     success : function(response) {
-        //        console.log(response);
-        //        // ajax_download(response);
-        //     },
-        //     error : function ( response ) {
-        //         console.log("URL: " + url)
-        //         console.log("D: " + JSON.stringify(data))
-        //         console.log("R: " + JSON.stringify(response));
-        //     }
-        // });
-        // return false;
-    // });
 });

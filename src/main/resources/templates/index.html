@@ -24,13 +24,14 @@
 <form id="s3UploadForm" enctype="multipart/form-data" method="POST" action="/s3/upload">
     <div class="form-group">
         <label for="bucketName">Bucket</label>
-        <select class="form-control" id="bucketName" name="bucketName">
+        <select class="form-control" id="bucketName" name="bucketName" th:required="true">
+            <option th:disabled="true" th:selected="true" value=""> -- select an option -- </option>
             <option th:each="bucket : ${buckets}"
                     th:value="${bucket.name}"
                     th:text="${bucket.name}"/>
         </select>
         <label for="kms_cmk_id">KMS CMK</label>
-        <select class="form-control" id="kms_cmk_id" name="kms_cmk_id">
+        <select class="form-control" id="kms_cmk_id" name="kms_cmk_id" th:required="true">
             <option th:each="alias : ${aliases}"
                     th:value="${alias.TargetKeyId}"
                     th:text="${alias.AliasName}"/>
@@ -38,7 +39,7 @@
     </div>
     <div class="form-group">
         <label for="fileInput">File Upload</label>
-        <input type="file" class="form-control-file" id="fileInput" name="fileInput" aria-describedby="fileHelp"/>
+        <input type="file" class="form-control-file" id="fileInput" name="fileInput" aria-describedby="fileHelp" th:required="true"/>
     </div>
     <div class="form-check">
         <label class="radio-inline"><input type="radio" name="encryptionRadioOption" value="SSE-KMS"/>Server-side Encryption</label>
@@ -50,28 +51,26 @@
 <form id="s3DownloadForm" method="GET" action="/s3/download">
     <div class="form-group">
         <label for="bucketName_dl">Bucket</label>
-        <select class="form-control" id="bucketName_dl" name="bucketName_dl" change="populateObjects();">
+        <select class="form-control" id="bucketName_dl" name="bucketName_dl" change="populateObjects();" th:required="true">
+            <option th:disabled="true" th:selected="true" value=""> -- select an option -- </option>
             <option th:each="bucket : ${buckets}"
                     th:value="${bucket.name}"
                     th:text="${bucket.name}"/>
         </select>
         <label for="objectName_dl">Object Key</label>
-        <select class="form-control" id="objectName_dl" name="objectName_dl">
+        <select class="form-control" id="objectName_dl" name="objectName_dl" th:required="true">
             <option th:each="object : ${objects}"
                     th:value="${object.key}"
                     th:text="${object.key}"/>
         </select>
         <label for="kms_cmk_id_dl">KMS CMK</label>
         <select class="form-control" id="kms_cmk_id_dl" name="kms_cmk_id_dl">
-            <!--<option th:each="index : ${#numbers.sequence( 0, #arrays.length(aliases)-1)}"-->
-            <!--th:value="${aliases[index].TargetKeyId}"-->
-            <!--th:text="${aliases[index].AliasName}"/>-->
             <option th:each="alias : ${aliases}"
                     th:value="${alias.TargetKeyId}"
                     th:text="${alias.AliasName}"/>
         </select>
         <label class="form-check-label">
-        <input class="form-check-input" type="checkbox" id="encryptCheckBox" name="encryptCheckBox" value="true" aria-label="..."/>Encrypted?
+        <input class="form-check-input" type="checkbox" id="encryptCheckBox" name="encryptCheckBox" value="true" aria-label="..."/>Is Object Client-side Encrypted?
         </label>
     </div>
     <button type="submit" class="btn btn-primary">Download</button>
