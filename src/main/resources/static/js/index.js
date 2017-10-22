@@ -27,11 +27,6 @@ $(document).ready(function() {
         var data = $('#s3UploadForm').serialize();
         console.log("Serialized Data: " + data);
         var url = "/s3/upload";
-        if(encryptionOption == 'SSE-KMS') {
-            url = "/s3/sse-kms-upload"
-        } else {
-            url = "/s3/cse-kms-upload"
-        }
         var form = new FormData($("#s3UploadForm")[0]);
         $.ajax({
             type: "PUT",

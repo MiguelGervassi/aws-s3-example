@@ -21,11 +21,10 @@
 
 <body class="nav-md">
 <h3>S3 File Upload</h3>
-<form id="s3UploadForm" enctype="multipart/form-data" method="POST">
+<form id="s3UploadForm" enctype="multipart/form-data" method="POST" action="/s3/upload">
     <div class="form-group">
         <label for="bucketName">Bucket</label>
         <select class="form-control" id="bucketName" name="bucketName">
-            <!--/*@thymesVar id="bucket" type="buckets"*/-->
             <option th:each="bucket : ${buckets}"
                     th:value="${bucket.name}"
                     th:text="${bucket.name}"/>

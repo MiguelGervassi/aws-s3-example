@@ -8,34 +8,18 @@ import com.amazonaws.services.s3.*;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Provider;
 import java.util.List;
 
-//    @Path("/users/{userid}")
-//    public Response getUsr(@PathParam("userid") String userId) {
 @RestController
 @RequestMapping("/s3")
 public class S3Controller {
@@ -61,35 +45,15 @@ public class S3Controller {
         return "success";
     }
 
-    //    @RequestMapping(path = "/upload", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
-//    public String upload(@RequestBody S3Object s3Object) throws Exception {
-
-
-//    @RequestMapping(path = "/upload", method = RequestMethod.PUT)
-//    public String upload(@PathParam("bucketName") String bucketName, @PathParam("cmkId") String cmkId, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
-//        System.out.println(bucketName);
-//        System.out.println(cmkId);
-//        System.out.println(fileInput);
-//        KmsUploadSSE.main(new Object[] { bucketName, fileInput, cmkId });
-//        return "success";
-//    }
-
-    @RequestMapping(path = "/cse-kms-upload", method = RequestMethod.PUT)
-    public String uploadUsingClientSideEncryption(@PathParam("bucketName") String bucketName, @PathParam("kms_cmk_id") String kms_cmk_id, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
-        System.out.println(bucketName);
-        System.out.println(kms_cmk_id);
-        System.out.println(fileInput.getOriginalFilename());
-        KmsUploadCSE.main(new Object[] { bucketName, fileInput, kms_cmk_id });
-        return "success";
-    }
-
-    @RequestMapping(path = "/sse-kms-upload", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public String uploadUsingServerSideEncryption(@PathParam("bucketName") String bucketName, @PathParam("kms_cmk_id") String kms_cmk_id, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
-        System.out.println(bucketName);
-        System.out.println(kms_cmk_id);
-        System.out.println(fileInput.getOriginalFilename());
-        KmsUploadSSE.main(new Object[] { bucketName, fileInput, kms_cmk_id });
-        return "success";
+    @RequestMapping(path = "/upload", method = RequestMethod.PUT)
+    public void upload(@PathParam("bucketName") String bucketName, @PathParam("kms_cmk_id") String kms_cmk_id,
+           @PathParam("encryptionRadioOption") String encryptionRadioOption, @RequestPart("fileInput") MultipartFile fileInput) throws  Exception {
+        System.out.println("Encryption Option: " + encryptionRadioOption);
+        if(encryptionRadioOption.equalsIgnoreCase("SSE-KMS")) {
+            KmsUploadSSE.main(new Object[] { bucketName, fileInput, kms_cmk_id });
+        } else {
+            KmsUploadCSE.main(new Object[] { bucketName, fileInput, kms_cmk_id });
+        }
     }
 
     @RequestMapping(path = "/download", method = RequestMethod.GET)
